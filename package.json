@@ -10,6 +10,7 @@
     "sync:album-covers": "node scripts/downloadAlbumCovers.mjs",
     "test:e2e": "playwright test && node scripts/summarizeArtifacts.mjs",
     "artifacts:upload": "node scripts/uploadArgusArtifacts.mjs",
+    "ci:upload-zip": "node scripts/uploadZipToApi.mjs",
     "argus:vercel": "ARGUS_TARGET_URL=https://musiquer.vercel.app npm run test:e2e && npm run artifacts:upload"
   },
   "dependencies": {
