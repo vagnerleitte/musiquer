@@ -8,7 +8,9 @@
     "build": "tsc -b && vite build",
     "preview": "vite preview --host 127.0.0.1",
     "sync:album-covers": "node scripts/downloadAlbumCovers.mjs",
-    "test:e2e": "playwright test && node scripts/summarizeArtifacts.mjs"
+    "test:e2e": "playwright test && node scripts/summarizeArtifacts.mjs",
+    "artifacts:upload": "node scripts/uploadArgusArtifacts.mjs",
+    "argus:vercel": "ARGUS_TARGET_URL=https://musiquer.vercel.app npm run test:e2e && npm run artifacts:upload"
   },
   "dependencies": {
     "@vitejs/plugin-react": "^4.5.0",
@@ -24,6 +26,7 @@
     "@types/node": "^22.15.29",
     "@types/react": "^18.3.23",
     "@types/react-dom": "^18.3.7",
+    "archiver": "^8.0.0",
     "autoprefixer": "^10.4.21",
     "postcss": "^8.5.6",
     "tailwindcss": "^3.4.17"
