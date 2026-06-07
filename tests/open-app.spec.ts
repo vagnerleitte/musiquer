@@ -1,10 +1,42 @@
+import AxeBuilder from "@axe-core/playwright";
 import { expect, type Page, test } from "@playwright/test";
-import { mkdir } from "node:fs/promises";
+import { mkdir, writeFile } from "node:fs/promises";
 
 async function waitForImages(page: Page) {
   await page.waitForLoadState("networkidle");
   await page.waitForFunction(() =>
     Array.from(document.images).every((image) => image.complete && image.naturalWidth > 0)
+  );
+}
+
+async function saveRenderArtifacts(page: Page, name: string) {
+  await mkdir("artifacts/screenshots", { recursive: true });
+  await mkdir("artifacts/dom", { recursive: true });
+  await mkdir("artifacts/accessibility", { recursive: true });
+  await mkdir("artifacts/axe", { recursive: true });
+
+  await page.screenshot({
+    fullPage: true,
+    path: `artifacts/screenshots/${name}.png`,
+  });
+  await writeFile(`artifacts/dom/${name}.html`, await page.content(), "utf8");
+
+  const cdpSession = await page.context().newCDPSession(page);
+  const accessibilityTree = await cdpSession.send("Accessibility.getFullAXTree");
+  await cdpSession.detach();
+
+  await writeFile(
+    `artifacts/accessibility/${name}.json`,
+    JSON.stringify(accessibilityTree, null, 2),
+    "utf8"
+  );
+
+  const axeResults = await new AxeBuilder({ page }).analyze();
+
+  await writeFile(
+    `artifacts/axe/${name}.json`,
+    JSON.stringify(axeResults, null, 2),
+    "utf8"
   );
 }
 
@@ -39,11 +71,7 @@ test("opens the target app and captures a screenshot", async ({ page }) => {
   await page.goto("/");
   await expect(page).toHaveTitle(/Argus Music Registry|Musiquer/i);
   await waitForImages(page);
-  await mkdir("artifacts/screenshots", { recursive: true });
-  await page.screenshot({
-    fullPage: true,
-    path: "artifacts/screenshots/home.png",
-  });
+  await saveRenderArtifacts(page, "home");
 });
 
 test("navigates from the album list to an album detail page", async ({ page }) => {
@@ -59,11 +87,7 @@ test("navigates from the album list to an album detail page", async ({ page }) =
   await expect(page.getByTestId("album-track")).not.toHaveCount(0);
   await waitForImages(page);
 
-  await mkdir("artifacts/screenshots", { recursive: true });
-  await page.screenshot({
-    fullPage: true,
-    path: "artifacts/screenshots/album-detail.png",
-  });
+  await saveRenderArtifacts(page, "album-detail");
 });
 
 test("creates an album using TheAudioDB JSON data", async ({ page }) => {
@@ -80,12 +104,7 @@ test("creates an album using TheAudioDB JSON data", async ({ page }) => {
   expect(albumJson.strAlbumThumb).toBeTruthy();
 
   await page.goto("/albums/new");
-  await mkdir("artifacts/screenshots", { recursive: true });
-
-  await page.screenshot({
-    fullPage: true,
-    path: "artifacts/screenshots/create-album-empty.png",
-  });
+  await saveRenderArtifacts(page, "create-album-empty");
 
   await page.getByPlaceholder("Nome do álbum").fill(albumJson.strAlbum);
   await page.getByLabel("Artista").fill(albumJson.strArtist);
@@ -99,10 +118,7 @@ test("creates an album using TheAudioDB JSON data", async ({ page }) => {
   await page.getByLabel(/URL da capa/).clear();
   await expect(page.getByLabel(/URL da capa/)).toHaveValue("");
 
-  await page.screenshot({
-    fullPage: true,
-    path: "artifacts/screenshots/create-album-filled.png",
-  });
+  await saveRenderArtifacts(page, "create-album-filled");
 
   await page.getByRole("button", { name: "Salvar Álbum" }).click();
 
@@ -110,10 +126,7 @@ test("creates an album using TheAudioDB JSON data", async ({ page }) => {
   await expect(page.getByText("Rated R")).toBeVisible();
   await waitForImages(page);
 
-  await page.screenshot({
-    fullPage: true,
-    path: "artifacts/screenshots/create-album-saved.png",
-  });
+  await saveRenderArtifacts(page, "create-album-saved");
 });
 
 test("creates a music inside the Rihanna album using TheAudioDB track data", async ({ page }) => {
@@ -129,15 +142,11 @@ test("creates a music inside the Rihanna album using TheAudioDB track data", asy
   expect(trackJson.strArtist).toBeTruthy();
   expect(trackJson.intDuration).toBeTruthy();
 
-  await mkdir("artifacts/screenshots", { recursive: true });
   await createRatedRAlbum(page);
 
   await page.goto("/new");
 
-  await page.screenshot({
-    fullPage: true,
-    path: "artifacts/screenshots/create-music-empty.png",
-  });
+  await saveRenderArtifacts(page, "create-music-empty");
 
   await page.getByPlaceholder("Nome da música ou álbum").fill(trackJson.strTrack);
   await page.getByLabel("Álbum").selectOption({ label: trackJson.strAlbum });
@@ -145,10 +154,7 @@ test("creates a music inside the Rihanna album using TheAudioDB track data", asy
   await expect(page.getByLabel("Ano")).toHaveValue("2009");
   await page.getByLabel("Duração").fill(formatAudioDbDuration(trackJson.intDuration));
 
-  await page.screenshot({
-    fullPage: true,
-    path: "artifacts/screenshots/create-music-filled.png",
-  });
+  await saveRenderArtifacts(page, "create-music-filled");
 
   await page.getByRole("button", { name: "Salvar" }).click();
 
@@ -163,8 +169,5 @@ test("creates a music inside the Rihanna album using TheAudioDB track data", asy
   await expect(page.getByTestId("album-track").filter({ hasText: trackJson.strTrack })).toBeVisible();
   await waitForImages(page);
 
-  await page.screenshot({
-    fullPage: true,
-    path: "artifacts/screenshots/create-music-saved.png",
-  });
+  await saveRenderArtifacts(page, "create-music-saved");
 });
