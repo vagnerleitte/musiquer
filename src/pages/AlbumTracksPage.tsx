@@ -1,4 +1,5 @@
 import { Link, useParams } from "react-router-dom";
+import { AlbumArtwork } from "../components/AlbumArtwork";
 import { AppLayout } from "../components/AppLayout";
 import { loadAlbums } from "../storage/albumStorage";
 import { loadMusics } from "../storage/musicStorage";
@@ -12,9 +13,7 @@ export function AlbumTracksPage() {
     <AppLayout>
       <section className="mb-6 flex flex-col justify-between gap-4 sm:flex-row sm:items-center">
         <div className="flex flex-col gap-4 sm:flex-row sm:items-center">
-          {album?.coverUrl ? (
-            <img className="h-28 w-28 rounded-2xl object-cover shadow-sm ring-1 ring-slate-200" src={album.coverUrl} />
-          ) : null}
+          {album ? <AlbumArtwork coverUrl={album.coverUrl} size="detail" /> : null}
           <div>
             <Link className="text-sm font-semibold text-indigo-500 hover:text-indigo-700" to="/">
               Voltar para álbuns

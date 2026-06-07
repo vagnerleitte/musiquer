@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
+import { AlbumArtwork } from "../components/AlbumArtwork";
 import { AppLayout } from "../components/AppLayout";
 import { loadAlbums, saveAlbums } from "../storage/albumStorage";
 import type { Album } from "../types/music";
@@ -44,13 +45,13 @@ export function AlbumListPage() {
 
       <section className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
         {filteredAlbums.map((album) => (
-          <article className="overflow-hidden rounded-2xl bg-white shadow-sm ring-1 ring-slate-200" key={album.id}>
+          <article
+            className="overflow-hidden rounded-2xl bg-white shadow-sm ring-1 ring-slate-200"
+            data-testid="album-card"
+            key={album.id}
+          >
             <div className="aspect-square bg-slate-100">
-              {album.coverUrl ? (
-                <img className="h-full w-full object-cover" src={album.coverUrl} />
-              ) : (
-                <div className="grid h-full place-items-center text-sm font-semibold text-slate-300">Sem capa</div>
-              )}
+              <AlbumArtwork coverUrl={album.coverUrl} size="card" />
             </div>
             <div className="p-5">
             <div className="flex items-start justify-between gap-4">
@@ -70,6 +71,7 @@ export function AlbumListPage() {
             <p className="mt-5 rounded-xl bg-slate-50 p-3 text-sm font-semibold text-slate-800">{album.year}</p>
             <Link
               className="mt-5 inline-flex w-full items-center justify-center rounded-xl border border-slate-200 px-4 py-3 text-sm font-semibold text-indigo-600 hover:bg-indigo-50"
+              data-testid="album-detail-link"
               to={`/albums/${album.id}`}
             >
               Ver músicas do álbum

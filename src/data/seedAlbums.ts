@@ -14,7 +14,7 @@ export const seedAlbums: Album[] = ((albumData.album ?? []) as AudioDbAlbum[])
   .slice(0, 8)
   .map((album) => ({
     id: `album-${album.idAlbum}`,
-    coverUrl: album.strAlbumThumb,
+    coverUrl: `/album-covers/album-${album.idAlbum}.jpg`,
     name: album.strAlbum ?? "Untitled album",
     artist: album.strArtist ?? "Unknown artist",
     year: Number(album.intYearReleased) || 2000,

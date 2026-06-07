@@ -7,7 +7,7 @@ function hydrateSeedCovers(albums: Album[]) {
   return albums.map((album) => {
     const seedAlbum = seedAlbums.find((seed) => seed.id === album.id);
 
-    return seedAlbum ? { ...album, coverUrl: album.coverUrl ?? seedAlbum.coverUrl } : album;
+    return seedAlbum ? { ...album, coverUrl: seedAlbum.coverUrl } : album;
   });
 }
 

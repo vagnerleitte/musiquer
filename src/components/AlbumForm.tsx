@@ -24,7 +24,7 @@ export function AlbumForm({ onCancel, onSave }: AlbumFormProps) {
     }
 
     onSave({
-      coverUrl: album.coverUrl?.trim(),
+      coverUrl: album.coverUrl?.trim() || undefined,
       name: album.name.trim(),
       artist: album.artist.trim(),
       year: Number(album.year),
@@ -52,7 +52,7 @@ export function AlbumForm({ onCancel, onSave }: AlbumFormProps) {
 
         <div className="sm:col-span-2">
           <label className="mb-2 block text-sm font-medium text-slate-700" htmlFor="album-cover">
-            URL da capa
+            URL da capa (opcional)
           </label>
           <input
             className="w-full rounded-xl border border-slate-200 bg-white px-4 py-3 text-slate-900 shadow-sm placeholder:text-slate-300"

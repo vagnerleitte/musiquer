@@ -12,5 +12,5 @@
     "isolatedModules": true,
     "noEmit": true
   },
-  "include": ["vite.config.ts", "tailwind.config.js", "postcss.config.js"]
+  "include": ["vite.config.ts", "playwright.config.ts", "tailwind.config.js", "postcss.config.js"]
 }
