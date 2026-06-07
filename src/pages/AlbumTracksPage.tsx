@@ -11,16 +11,21 @@ export function AlbumTracksPage() {
   return (
     <AppLayout>
       <section className="mb-6 flex flex-col justify-between gap-4 sm:flex-row sm:items-center">
-        <div>
-          <Link className="text-sm font-semibold text-indigo-500 hover:text-indigo-700" to="/">
-            Voltar para álbuns
-          </Link>
-          <h2 className="mt-3 text-2xl font-bold text-slate-950">
-            {album?.name ?? "Selecione um álbum"}
-          </h2>
-          <p className="mt-1 text-sm text-slate-400">
-            {album ? `${album.artist} • ${album.year} • ${tracks.length} músicas` : "Volte para a home e escolha um card"}
-          </p>
+        <div className="flex flex-col gap-4 sm:flex-row sm:items-center">
+          {album?.coverUrl ? (
+            <img className="h-28 w-28 rounded-2xl object-cover shadow-sm ring-1 ring-slate-200" src={album.coverUrl} />
+          ) : null}
+          <div>
+            <Link className="text-sm font-semibold text-indigo-500 hover:text-indigo-700" to="/">
+              Voltar para álbuns
+            </Link>
+            <h2 className="mt-3 text-2xl font-bold text-slate-950">
+              {album?.name ?? "Selecione um álbum"}
+            </h2>
+            <p className="mt-1 text-sm text-slate-400">
+              {album ? `${album.artist} • ${album.year} • ${tracks.length} músicas` : "Volte para a home e escolha um card"}
+            </p>
+          </div>
         </div>
         {album ? (
           <Link

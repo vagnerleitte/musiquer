@@ -8,6 +8,7 @@ type AlbumFormProps = {
 
 export function AlbumForm({ onCancel, onSave }: AlbumFormProps) {
   const [album, setAlbum] = useState<Omit<Album, "id">>({
+    coverUrl: "",
     name: "",
     artist: "",
     year: new Date().getFullYear(),
@@ -23,6 +24,7 @@ export function AlbumForm({ onCancel, onSave }: AlbumFormProps) {
     }
 
     onSave({
+      coverUrl: album.coverUrl?.trim(),
       name: album.name.trim(),
       artist: album.artist.trim(),
       year: Number(album.year),
@@ -45,6 +47,19 @@ export function AlbumForm({ onCancel, onSave }: AlbumFormProps) {
               setAlbum({ ...album, name: event.target.value });
               setNameHasError(false);
             }}
+          />
+        </div>
+
+        <div className="sm:col-span-2">
+          <label className="mb-2 block text-sm font-medium text-slate-700" htmlFor="album-cover">
+            URL da capa
+          </label>
+          <input
+            className="w-full rounded-xl border border-slate-200 bg-white px-4 py-3 text-slate-900 shadow-sm placeholder:text-slate-300"
+            id="album-cover"
+            placeholder="https://..."
+            value={album.coverUrl}
+            onChange={(event) => setAlbum({ ...album, coverUrl: event.target.value })}
           />
         </div>
 
